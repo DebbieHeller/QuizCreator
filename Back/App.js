@@ -13,6 +13,7 @@ app.get('/api/test', (req, res) => {
 });
 
 app.post('/api/createQuiz', async (req, res) => {
+  console.log(req.body)
   console.log("heyyyy");
   console.log("API_KEY " + process.env.API_KEY);
   
