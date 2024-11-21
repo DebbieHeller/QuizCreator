@@ -1,98 +1,92 @@
 import React, { useState } from "react";
+import SingleQuiz from "../components/SingleQuiz";
 
 function Quiz() {
-  const [quizContent, setQuizContent] = useState([]); // Store quiz as an array of questions
-  const [loading, setLoading] = useState(false);
-  const [questionCount, setQuestionCount] = useState(5); // Default: 5 questions
-  const [extraData, setExtraData] = useState(""); // Additional context for the quiz
+  const [quizContent, setQuizContent] = useState([]); // Store quiz questions
+  const [extraData, setExtraData] = useState(""); // Quiz topic
+  const [userAnswers, setUserAnswers] = useState({}); // Track user-selected answers
+  const [feedback, setFeedback] = useState({}); // Track feedback for each question
+  const [score, setScore] = useState(null); // Track the total score
 
-  const handleFetchQuiz = async () => {
-    setLoading(true);
+  const handleQuizCreated = (quizData, topic) => {
+    setQuizContent(quizData); // Update quiz questions
+    setExtraData(topic); // Update quiz topic
+    setUserAnswers({}); // Reset user answers
+    setFeedback({}); // Reset feedback
+    setScore(null); // Reset score
+  };
 
-    try {
-      const response = await fetch("http://localhost:5000/api/createQuiz", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          questionCount, // Number of questions
-          extraData, // Additional topic or context
-        }),
-      });
+  const handleAnswerChange = (questionIndex, selectedAnswer) => {
+    setUserAnswers({
+      ...userAnswers,
+      [questionIndex]: selectedAnswer,
+    });
+  };
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log(data);
-        setQuizContent(data); // Assume data.text contains the array of questions
+  const handleSubmitQuiz = () => {
+    let correctCount = 0;
+    const newFeedback = {};
+
+    quizContent.forEach((question, index) => {
+      const correctAnswer = question.correctAnswer;
+      const userAnswer = userAnswers[index];
+
+      if (userAnswer === correctAnswer) {
+        correctCount++;
+        newFeedback[index] = "Correct! 🎉";
       } else {
-        throw new Error("Failed to fetch quiz");
+        newFeedback[index] = `Incorrect. The correct answer is: ${correctAnswer}`;
       }
-    } catch (error) {
-      console.error("Error fetching quiz:", error);
-      setQuizContent([]); // Reset quiz content on error
-    } finally {
-      setLoading(false);
-    }
+    });
+
+    setFeedback(newFeedback);
+
+    // Calculate the score: (100 / total questions) * correct answers
+    const totalScore = (100 / quizContent.length) * correctCount;
+    setScore(totalScore.toFixed(2)); // Round to 2 decimal places
   };
 
   return (
     <div>
-      <h1>Quiz Generator</h1>
+      <SingleQuiz onQuizCreated={handleQuizCreated} />
 
-      <div>
-        <label>
-          Number of Questions:
-          <input
-            type="number"
-            value={questionCount}
-            onChange={(e) => setQuestionCount(e.target.value)}
-            min="1"
-          />
-        </label>
-      </div>
-
-      <div>
-        <label>
-          Extra Data (Topic):
-          <input
-            type="text"
-            value={extraData}
-            onChange={(e) => setExtraData(e.target.value)}
-          />
-        </label>
-      </div>
-
-      <button onClick={handleFetchQuiz} disabled={loading}>
-        {loading ? "Creating Quiz..." : "Create Quiz"}
-      </button>
-
-      <div>
-        {loading && <p>Loading quiz...</p>}
-        {!loading && quizContent.length > 0 && (
-          <div>
-            <h2>Generated Quiz on "{extraData}"</h2>
-            <h3>Number of Questions: {questionCount}</h3>
-            {quizContent.map((question, index) => (
-              <div key={index}>
-                <p>
-                  <strong>Q{index + 1}:</strong> {question.question}
-                </p>
-                <ol type="a">
-                  {question.options.map((choice, idx) => (
-                    <li key={idx}>{choice}</li>
-                  ))}
-                </ol>
-                <p>
-                  <strong>Answer:</strong> {question.correctAnswer}
-                </p>
-                <hr />
-              </div>
-            ))}
-          </div>
-        )}
-        {!loading && quizContent.length === 0 && <p>No quiz data available.</p>}
-      </div>
+      {quizContent.length > 0 && (
+        <div>
+          <h2>Quiz on "{extraData}"</h2>
+          {quizContent.map((question, index) => (
+            <div key={index} style={{ marginBottom: "20px" }}>
+              <p>
+                <strong>Q{index + 1}:</strong> {question.question}
+              </p>
+              <form>
+                {question.options.map((option, idx) => (
+                  <div key={idx}>
+                    <label>
+                      <input
+                        type="radio"
+                        name={`question-${index}`}
+                        value={option}
+                        checked={userAnswers[index] === option}
+                        onChange={() => handleAnswerChange(index, option)}
+                      />
+                      {option}
+                    </label>
+                  </div>
+                ))}
+              </form>
+              {feedback[index] && <p>{feedback[index]}</p>}
+              <hr />
+            </div>
+          ))}
+          <button onClick={handleSubmitQuiz}>Submit Quiz</button>
+          {score !== null && (
+            <div>
+              <h3>Your Score: {score}/100</h3>
+            </div>
+          )}
+        </div>
+      )}
+      {quizContent.length === 0 && <p>No quiz data available. Create a quiz to start!</p>}
     </div>
   );
 }
