@@ -1,16 +1,16 @@
 import React, { useState } from "react";
-import SingleQuiz from "../components/SingleQuiz";
+import SingleQuestion from "../components/SingleQuestion";
 
 function Quiz() {
   const [quizContent, setQuizContent] = useState([]); // Store quiz questions
-  const [extraData, setExtraData] = useState(""); // Quiz topic
+  const [topic, setTopic] = useState(""); // Quiz topic
   const [userAnswers, setUserAnswers] = useState({}); // Track user-selected answers
   const [feedback, setFeedback] = useState({}); // Track feedback for each question
   const [score, setScore] = useState(null); // Track the total score
 
   const handleQuizCreated = (quizData, topic) => {
     setQuizContent(quizData); // Update quiz questions
-    setExtraData(topic); // Update quiz topic
+    setTopic(topic); // Update quiz topic
     setUserAnswers({}); // Reset user answers
     setFeedback({}); // Reset feedback
     setScore(null); // Reset score
@@ -48,13 +48,22 @@ function Quiz() {
 
   return (
     <div>
-      <SingleQuiz onQuizCreated={handleQuizCreated} />
+      <SingleQuestion onQuizCreated={handleQuizCreated} />
 
       {quizContent.length > 0 && (
-        <div>
-          <h2>Quiz on "{extraData}"</h2>
+        <div className="quiz-container">
+          <h2>Quiz on "{topic}"</h2>
           {quizContent.map((question, index) => (
-            <div key={index} style={{ marginBottom: "20px" }}>
+            <div
+              key={index}
+              className={`single-question ${
+                feedback[index]?.includes("Correct")
+                  ? "correct"
+                  : feedback[index]?.includes("Incorrect")
+                  ? "incorrect"
+                  : ""
+              }`}
+            >
               <p>
                 <strong>Q{index + 1}:</strong> {question.question}
               </p>
@@ -80,7 +89,7 @@ function Quiz() {
           ))}
           <button onClick={handleSubmitQuiz}>Submit Quiz</button>
           {score !== null && (
-            <div>
+            <div className="score-container">
               <h3>Your Score: {score}/100</h3>
             </div>
           )}
