@@ -1,6 +1,7 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+const pool = require('../DBQUIZ.js'); // ייבוא החיבור למסד הנתונים
 
-const generateQuiz = async (questionCount, topic) => { // שינוי ל-topic
+const generateQuiz = async (questionCount, topic) => {
   const genAI = new GoogleGenerativeAI(process.env.API_KEY);
   const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
@@ -22,22 +23,47 @@ const generateQuiz = async (questionCount, topic) => { // שינוי ל-topic
     const result = await model.generateContent(prompt);
     let generatedText = result.response.text();
 
-    // Remove non-JSON elements such as code fences
+    // ניקוי JSON לא תקין
     generatedText = generatedText.replace(/```json|```/g, '').trim();
+    const quizData = JSON.parse(generatedText);
 
-    // Parse cleaned text into JSON
-    let quizData;
-    try {
-      quizData = JSON.parse(generatedText);
-    } catch (parseError) {
-      console.error('Error parsing generated text to JSON:', parseError);
-      throw new Error('Invalid JSON format received from AI');
-    }
+    // שמירת חידון ושאלות במסד נתונים
+    const quizId = await saveQuizToDatabase(topic, questionCount, quizData);
 
-    return quizData;
+    console.log(`Quiz ID ${quizId} and questions were added to the database!`);
+    return { quizId, quizData };
   } catch (error) {
     console.error('Error generating quiz:', error);
     throw new Error('Failed to generate quiz');
+  }
+};
+
+const saveQuizToDatabase = async (topic, questionCount, quizData) => {
+  const connection = await pool.getConnection();
+  try {
+    // הוספת חידון
+    const [quizResult] = await connection.execute(
+      'INSERT INTO quizzes (topic, question_count) VALUES (?, ?)',
+      [topic, questionCount]
+    );
+    const quizId = quizResult.insertId;
+
+    // הוספת שאלות
+    for (const question of quizData) {
+      const { question: questionText, options, correctAnswer } = question;
+      await connection.execute(
+        `INSERT INTO questions (quiz_id, question, option1, option2, option3, option4, correct_answer)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [quizId, questionText, options[0], options[1], options[2], options[3], correctAnswer]
+      );
+    }
+
+    return quizId;
+  } catch (error) {
+    console.error('Error saving quiz to database:', error);
+    throw new Error('Failed to save quiz to database');
+  } finally {
+    connection.release();
   }
 };
 
