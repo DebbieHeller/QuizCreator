@@ -12,13 +12,13 @@ function App() {
   return (
     <BrowserRouter>
       <div id="everything">
-      <UserContext.Provider value={{ user, setUser }}>
-        {/* ניתוב לכל העמודים */}
-        <Routes>
-          <Route path="/" element={<Quiz />} /> {/* עמוד ברירת המחדל */}
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/login" element={<Login />} />
-        </Routes>
+        <UserContext.Provider value={{ user, setUser }}>
+          {/* ניתוב לכל העמודים */}
+          <Routes>
+            <Route path="/" element={<Quiz />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/login" element={<Login />} />
+          </Routes>
         </UserContext.Provider>
 
       </div>
