@@ -91,15 +91,15 @@ body{
 h1 {
   font-family: 'Quicksand';
   text-align: center;
-  color: #006D77;
+  color: #409299;
   font-weight: 600;
   margin: 0 0 40px;
 }
 
 #button-save {
   width: 100%;
-  height: 60px;
-  background-color: #E29578;
+  height: 67px;
+  background-color: #e278b2;
   color: #EDF6F9;
   font-weight: 200;
   font-size: 250%;
@@ -108,7 +108,7 @@ h1 {
 
 #button-save:hover {
   background-color: #EDF6F9;
-  color: #006D77;
+  color: #409299;
 }
 
 .input,
@@ -126,7 +126,7 @@ textarea {
   border-radius: 0;
   transition: border-color 0.25s ease, box-shadow 0.25s ease;
   outline: 0;
-  border-color: #E29578;
+  border-color: #409299 !important;
 }
 
 textarea {
@@ -156,15 +156,12 @@ textarea {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  background: rgb(245, 167, 136);
+  background: #e278b2;
   color: #ffffff;
   transition: all 0.5s ease;
 }
 
-.button:hover,
-.button:focus {
-  background: rgb(186, 73, 61);
-}
+
 
 .button-block {
   display: block;
