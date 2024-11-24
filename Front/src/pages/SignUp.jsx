@@ -77,12 +77,12 @@ function SignUp() {
             </div> */}
             <form id="form">
                 <ul id="tabs" className="register-buttons active">
-                    {/* <li className="tab active">
-                        <Link to="/YO/SignUp" state={{ roleID, photographer }} className="link-btn">Sign Up</Link>
+                    <li className="tab active">
+                        <Link to="/signUp"  className="link-btn">Sign Up</Link>
                     </li>
                     <li className="tab">
-                        <Link to="/YO/logIn" state={{ photographer, roleID }} className="link-btn">Log In</Link>
-                    </li> */}
+                        <Link to="/logIn" className="link-btn">Log In</Link>
+                    </li>
                 </ul>
                 <div className="content" id="signUpForm">
                     <h1>Sign-Up</h1>

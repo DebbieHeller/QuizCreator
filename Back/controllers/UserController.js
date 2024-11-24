@@ -29,6 +29,35 @@ const registerUser = async (req, res) => {
     }
 };
 
+
+const logInUser = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        // בדוק אם כל השדות קיימים
+        if (!email || !password) {
+            return res.status(400).send("Email and password are required.");
+        }
+
+        // בדוק אם המשתמש קיים
+        const existingUser = await UserModel.getUserByEmail(email);
+        if (!existingUser) {
+            return res.status(401).send("Unauthorized: Incorrect email or password");
+        }
+
+        // בדוק אם הסיסמא נכונה
+        const isPasswordCorrect = await bcrypt.compare(password, existingUser.password);
+        if (!isPasswordCorrect) {
+            return res.status(401).send("Unauthorized: Incorrect email or password");
+        }
+
+        res.status(200).send({ message: "Login successful", user: existingUser });
+    } catch (error) {
+        console.error("Error in logInUser:", error);
+        res.status(500).send("An error occurred during login.");
+    }
+};
+
 module.exports = {
-    registerUser
+    registerUser,logInUser
 };

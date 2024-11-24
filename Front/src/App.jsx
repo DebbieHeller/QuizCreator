@@ -2,6 +2,7 @@ import React, { useState, createContext, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Quiz from './pages/Quiz';
 import SignUp from './pages/SignUp';
+import Login from './pages/LogIn'
 // import Profile from './pages/Profile';
 export const UserContext = createContext();
 
@@ -16,8 +17,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Quiz />} /> {/* עמוד ברירת המחדל */}
           <Route path="/signup" element={<SignUp />} />
-          {/* <Route path="/login" element={<Login />} />
-          <Route path="/profile" element={<Profile />} /> */}
+          <Route path="/login" element={<Login />} />
         </Routes>
         </UserContext.Provider>
 

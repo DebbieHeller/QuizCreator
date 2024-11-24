@@ -6,5 +6,6 @@ console.log("userRouter initialized"); // הוספת לוג לבדיקת אתח�
 
 // יצירת מסלול POST לשמירת משתמש חדש
 router.post('/signUp', UserController.registerUser);
+router.post('/logIn', UserController.logInUser);
 
 module.exports = router;
