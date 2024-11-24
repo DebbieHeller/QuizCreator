@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import SingleQuestion from "../components/SingleQuestion";
 
 function Quiz() {
@@ -7,6 +8,7 @@ function Quiz() {
   const [userAnswers, setUserAnswers] = useState({}); // Track user-selected answers
   const [feedback, setFeedback] = useState({}); // Track feedback for each question
   const [score, setScore] = useState(null); // Track the total score
+  const navigate = useNavigate();
 
   const handleQuizCreated = (quizData, topic) => {
     setQuizContent(quizData); // Update quiz questions
@@ -22,6 +24,10 @@ function Quiz() {
       [questionIndex]: selectedAnswer,
     });
   };
+
+  const handleSignUpClick=()=>{
+    navigate('/SignUp');
+  }
 
   const handleSubmitQuiz = () => {
     let correctCount = 0;
@@ -48,6 +54,10 @@ function Quiz() {
 
   return (
     <div>
+
+      <div className="SignUp">
+        <button onClick={handleSignUpClick}>SignUp</button>
+      </div>
       <SingleQuestion onQuizCreated={handleQuizCreated} />
 
       {quizContent.length > 0 && (
@@ -56,13 +66,12 @@ function Quiz() {
           {quizContent.map((question, index) => (
             <div
               key={index}
-              className={`single-question ${
-                feedback[index]?.includes("Correct")
-                  ? "correct"
-                  : feedback[index]?.includes("Incorrect")
+              className={`single-question ${feedback[index]?.includes("Correct")
+                ? "correct"
+                : feedback[index]?.includes("Incorrect")
                   ? "incorrect"
                   : ""
-              }`}
+                }`}
             >
               <p>
                 <strong>Q{index + 1}:</strong> {question.question}
