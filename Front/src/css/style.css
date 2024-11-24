@@ -1,73 +1,103 @@
-/* Global Styles */
+
+ *{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body Styling */
 body {
     font-family: 'Quicksand', sans-serif;
-    background-color: #f9f9f9;
+    background-color: #f0f4f8;
     margin: 0;
     padding: 0;
     color: #333;
     line-height: 1.6;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
-h1, h2, h3 {
-    text-align: center;
-    color: #444;
+/* Ensure Body and HTML take full height */
+html, body {
+    height: 100%;
+}
+
+/* Main Container */
+.quiz-container {
+    margin: 0 auto; /* Center the container */
+    padding: 20px; /* Add padding around content */
+    max-width: 900px;
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    border-radius: 10px;
+}
+
+/* Quiz Header */
+.quiz-container h2 {
+    font-size: 2em;
+    color: #0077cc;
     margin-bottom: 20px;
+    text-align: center;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-p {
-    margin: 0 0 10px;
+/* Question Block */
+.single-question {
+    background-color: #eaf4ff; /* Light blue */
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    transition: transform 0.2s ease, background-color 0.3s ease;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Container */
-div {
-    margin: 0 auto;
-    max-width: 800px;
-    padding: 20px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
-    border-radius: 8px;
+/* No Top Cutoff for First Question */
+.single-question:first-child {
+    margin-top: 0; /* Ensure it's visible */
 }
 
-/* Form and Input Styling */
+/* Correct and Incorrect Feedback */
+.single-question.correct {
+    background-color: #d4f5d6; /* Light green */
+}
+
+.single-question.incorrect {
+    background-color: #fde2e2; /* Light red */
+}
+
+/* Options Styling */
+input[type="radio"] {
+    margin-right: 10px;
+    cursor: pointer;
+}
+
 label {
     display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #555;
-}
-
-input[type="text"],
-input[type="number"] {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-sizing: border-box;
     font-size: 1em;
-    transition: border-color 0.3s ease;
+    margin-bottom: 10px;
+    color: #555;
+    cursor: pointer;
 }
 
-input[type="text"]:focus,
-input[type="number"]:focus {
-    border-color: #007bff;
-    outline: none;
+form {
+    margin-top: 10px;
 }
 
 /* Button Styling */
 button {
     background-color: #007bff;
     color: white;
-    padding: 10px 15px;
+    padding: 12px 20px;
     font-size: 1em;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-top: 20px;
 }
 
 button:hover {
     background-color: #0056b3;
+    transform: translateY(-2px);
 }
 
 button:disabled {
@@ -75,66 +105,24 @@ button:disabled {
     cursor: not-allowed;
 }
 
-/* Quiz Styling */
-hr {
-    border: 1px solid #ddd;
-    margin: 20px 0;
-}
-
-.quiz-container {
-    margin-top: 20px;
-}
-
-.quiz-container h2 {
-    font-size: 1.5em;
-    color: #007bff;
-}
-
-.quiz-container form {
-    margin-top: 10px;
-}
-
-/* Single Question Styling */
-.single-question {
-    background-color: #f1f5ff; /* Light blue background */
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    transition: background-color 0.3s ease;
-}
-
-/* Feedback-Based Backgrounds */
-.single-question.correct {
-    background-color: #d4edda; /* Light green for correct answers */
-}
-
-.single-question.incorrect {
-    background-color: #f8d7da; /* Light red for incorrect answers */
-}
-
-/* Feedback Styling */
-.correct-feedback {
-    color: #28a745;
-    font-weight: bold;
-}
-
-.incorrect-feedback {
-    color: #dc3545;
-    font-weight: bold;
-}
-
-/* Score Styling */
+/* Score Section */
 .score-container {
     text-align: center;
-    font-size: 1.2em;
+    margin-top: 30px;
+    font-size: 1.5em;
     color: #333;
     font-weight: bold;
-    margin-top: 20px;
+}
+
+/* Horizontal Line */
+hr {
+    border: 1px solid #ddd;
+    margin: 15px 0;
 }
 
 /* Responsive Design */
 @media screen and (max-width: 768px) {
-    div {
+    .quiz-container {
         max-width: 95%;
     }
 

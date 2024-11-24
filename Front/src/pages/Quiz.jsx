@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import CreateQuiz from "../components/CreateQuiz";
 import SingleQuestion from "../components/SingleQuestion";
-import { UserContext } from '../App'; // ייבוא של UserContext
+import { UserContext } from '../App';
 
 function Quiz() {
-  const [quizContent, setQuizContent] = useState(null); 
+  const [quizContent, setQuizContent] = useState(null);
   const [topic, setTopic] = useState("");
   const [userAnswers, setUserAnswers] = useState({});
   const [feedback, setFeedback] = useState({});
-  const { user, setUser } = useContext(UserContext); // שימוש ב-context
+  const { user, setUser } = useContext(UserContext);
   const [score, setScore] = useState(null);
   const navigate = useNavigate();
 
@@ -19,7 +20,7 @@ function Quiz() {
   }, [quizContent]);
 
   const handleQuizCreated = (quizData, topic) => {
-    setQuizContent(quizData); // Store the entire object
+    setQuizContent(quizData);
     setTopic(topic);
     setUserAnswers({});
     setFeedback({});
@@ -27,10 +28,10 @@ function Quiz() {
   };
 
   const handleAnswerChange = (questionIndex, selectedAnswer) => {
-    setUserAnswers({
-      ...userAnswers,
+    setUserAnswers(prev => ({
+      ...prev,
       [questionIndex]: selectedAnswer,
-    });
+    }));
   };
 
   const handleSubmitQuiz = () => {
@@ -40,96 +41,54 @@ function Quiz() {
     const newFeedback = {};
     
     quizContent.quizData.forEach((question, index) => {
-      const correctAnswer = question.correctAnswer;
-      const userAnswer = userAnswers[index];
-      if (userAnswer === correctAnswer) {
-        correctCount++;
-        newFeedback[index] = "Correct! 🎉";
-      } else {
-        newFeedback[index] = `Incorrect. The correct answer is: ${correctAnswer}`;
-      }
+      const isCorrect = userAnswers[index] === question.correctAnswer;
+      correctCount += isCorrect ? 1 : 0;
+      newFeedback[index] = isCorrect 
+        ? "Correct! 🎉" 
+        : `Incorrect. The correct answer is: ${question.correctAnswer}`;
     });
 
     setFeedback(newFeedback);
-    const totalScore = (100 / quizContent.quizData.length) * correctCount;
-    setScore(totalScore.toFixed(2));
+    setScore(((100 / quizContent.quizData.length) * correctCount).toFixed(2));
   };
 
-  const handleSignOut = () => {
-    setUser(null); // התנתקות מהמשתמש
-    navigate('/'); // ניווט לעמוד הבית אחרי התנתקות
-  };
-
-  const handleSignUpClick = () => {
-    navigate('/SignUp');
-  };
-
-  const handleMyQuizzesClick = () => {
-    navigate('/myQuizzes'); // ניווט לעמוד "הבחנים שלי"
-  };
+  const handleNavigation = (path) => navigate(path);
 
   return (
-    <div>
-      {/* הצגת כפתור SIGN UP אם אין משתמש מחובר */}
-      {!user && (
-        <div className="SignUp">
-          <button onClick={handleSignUpClick}>SignUp</button>
-        </div>
-      )}
+    <div className="quiz-page">
+      <div className="navigation-buttons">
+        {!user && (
+          <button onClick={() => handleNavigation('/SignUp')}>SignUp</button>
+        )}
+        {user && (
+          <>
+            <button onClick={() => handleNavigation('/myQuizzes')}>
+              My Quizzes
+            </button>
+            <button onClick={() => {
+              setUser(null);
+              handleNavigation('/');
+            }}>
+              Sign Out
+            </button>
+          </>
+        )}
+      </div>
 
-      {/* הצגת כפתור "הבחנים שלי" אם יש משתמש מחובר */}
-      {user && (
-        <div className="my-quizzes">
-          <button onClick={handleMyQuizzesClick}>my-quizzes</button>
-        </div>
-      )}
-
-      {/* הצגת כפתור "Sign Out" אם יש משתמש מחובר */}
-      {user && (
-        <div className="sign-out">
-          <button onClick={handleSignOut}>Sign Out</button>
-        </div>
-      )}
+      <CreateQuiz onQuizCreated={handleQuizCreated} />
       
-      <SingleQuestion onQuizCreated={handleQuizCreated} />
-      
-      
-      {quizContent?.quizData && quizContent.quizData.length > 0 ? (
+      {quizContent?.quizData?.length > 0 ? (
         <div className="quiz-container">
           <h2>Quiz on "{topic}"</h2>
           {quizContent.quizData.map((question, index) => (
-            <div
+            <SingleQuestion
               key={index}
-              className={`single-question ${
-                feedback[index]?.includes("Correct")
-                  ? "correct"
-                  : feedback[index]?.includes("Incorrect")
-                  ? "incorrect"
-                  : ""
-              }`}
-            >
-              <p>
-                <strong>Q{index + 1}:</strong> {question.question}
-              </p>
-              <form>
-                {question.options.map((option, idx) => (
-                  <div key={idx}>
-                    <label>
-                      <input
-                        type="radio"
-                        name={`question-${index}`}
-                        value={option}
-                        checked={userAnswers[index] === option}
-                        onChange={() => handleAnswerChange(index, option)}
-                      />
-                      {option}
-                    </label>
-                  </div>
-                ))}
-              </form>
-              {feedback[index] && <p>{feedback[index]}</p>}
-              <hr />
-            </div>
+              question={question}
+              index={index}
+              userAnswer={userAnswers[index]}
+              onAnswerChange={handleAnswerChange}
+              feedback={feedback[index]}
+            />
           ))}
           <button onClick={handleSubmitQuiz}>Submit Quiz</button>
           {score !== null && (
