@@ -1,69 +1,68 @@
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { UserContext } from "../App"; // ודא שהנתיב נכון
+import { UserContext } from "../App";
 import '../CSS/Registation.css';
 
 function LogIn() {
   const navigate = useNavigate();
-  const { setUser } = useContext(UserContext); // גישה ל-setUser מה-UserContext
-  const [formData, setFormData] = useState({});
-  const [error, setError] = useState(null);
+  const { setUser } = useContext(UserContext);
+  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  function handleChange(event) {
+  const handleChange = (event) => {
     const { name, value } = event.target;
-    setFormData(prevFormData => ({
-      ...prevFormData,
-      [name]: value,
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
     }));
-  }
+    setError(''); // ניקוי שגיאות בעת שינוי
+  };
 
-  const handleLogInButton = () => {
+  const handleLogInButton = async (e) => {
+    e.preventDefault();
+    setError('');
+    setIsLoading(true);
+
     if (!formData.email || !formData.password) {
-      alert("Must Fill All Details");
+      setError("Please fill in all fields");
+      setIsLoading(false);
       return;
     }
 
-    const body = {
-      email: formData.email,
-      password: formData.password,
-    };
-
-    const request = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    };
-
-    fetch(`http://localhost:5000/users/logIn`, request)
-      .then(res => {
-        if (!res.ok) {
-          return res.json().then(error => { throw new Error(error.error); });
-        }
-        return res.json();
-      })
-      .then(data => {
-        const { user } = data;
-
-        if (user) {
-          setUser(user); // עדכון ה-UserContext
-          alert("You logged in successfully!");
-          navigate("/"); // מעבר לדף הבית
-        } else {
-          throw new Error("Login failed. User data is missing.");
-        }
-      })
-      .catch(error => {
-        setError(error.message);
-        alert(error.message);
+    try {
+      const response = await fetch('http://localhost:5000/users/logIn', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
       });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Login failed');
+      }
+
+      // שמירת הטוקן
+      localStorage.setItem('token', data.token);
+      
+      // עדכון המשתמש בקונטקסט
+      setUser(data.user);
+      
+      // ניווט לדף הבית
+      navigate("/");
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <div>
-      <div className="onTopBtn"></div>
-      <form id="form">
+    <div className="auth-container">
+      <form id="form" onSubmit={handleLogInButton}>
         <ul id="tabs" className="register-buttons active">
           <li className="tab">
             <Link to="/signUp" className="link-btn">Sign Up</Link>
@@ -72,38 +71,45 @@ function LogIn() {
             <Link to="/logIn" className="link-btn">Log In</Link>
           </li>
         </ul>
-        <div>
+        
+        <div className="form-content">
           <h1>Welcome Back!</h1>
-          <div className="User-fill">
+          
+          <div className="input-group">
             <input
-              className="input"
-              id="userEmail"
-              onChange={handleChange}
-              type="text"
-              placeholder="userEmail"
+              className={`input ${error && !formData.email ? 'error' : ''}`}
+              type="email"
+              placeholder="Email"
               name="email"
+              value={formData.email}
+              onChange={handleChange}
+              disabled={isLoading}
               required
             />
           </div>
-          <div className="User-fill">
+
+          <div className="input-group">
             <input
-              className="input"
-              onChange={handleChange}
-              id="userPassword"
+              className={`input ${error && !formData.password ? 'error' : ''}`}
               type="password"
               placeholder="Password"
               name="password"
+              value={formData.password}
+              onChange={handleChange}
+              disabled={isLoading}
               required
             />
           </div>
+
+          {error && <p className="error-message">{error}</p>}
+
           <button
-            type="button"
-            id="button-save"
-            onClick={handleLogInButton}
+            type="submit"
+            className="submit-button"
+            disabled={isLoading}
           >
-            LOG-IN
+            {isLoading ? 'Logging in...' : 'LOG IN'}
           </button>
-          {error && <p style={{ color: "red" }}>{error}</p>}
         </div>
       </form>
     </div>
