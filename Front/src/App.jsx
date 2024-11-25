@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Quiz from './pages/Quiz';
 import SignUp from './pages/SignUp';
 import Login from './pages/LogIn';
+import MyQuizzes from './pages/MyQuizzes'; // ייבוא הרכיב החדש
 
 export const UserContext = createContext();
 
@@ -10,7 +11,7 @@ export const UserContext = createContext();
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
   if (!token) {
-    return <Navigate to="/Login" replace />;
+    return <Navigate to="/login" replace />;
   }
   return children;
 };
@@ -70,6 +71,11 @@ function App() {
           } />
           <Route path="/login" element={
             user ? <Navigate to="/" replace /> : <Login />
+          } />
+          <Route path="/my-quizzes" element={
+            <ProtectedRoute>
+              <MyQuizzes userID={user?.id} />
+            </ProtectedRoute>
           } />
         </Routes>
       </UserContext.Provider>

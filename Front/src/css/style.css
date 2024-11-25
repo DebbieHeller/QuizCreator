@@ -199,7 +199,26 @@ hr {
     border: 1px solid #ddd;
     margin: 15px 0;
 }
-
+.my-quizzes {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .quiz-button {
+    margin: 10px 0;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .quiz-button:hover {
+    background-color: #0056b3;
+  }
+  
 /* Responsive Design */
 @media screen and (max-width: 768px) {
     .quiz-container {

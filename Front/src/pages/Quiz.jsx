@@ -58,7 +58,7 @@ function Quiz() {
         )}
         {user && (
           <>
-            <button className="navButtons" onClick={() => handleNavigation('/myQuizzes')}>
+            <button className="navButtons" onClick={() => handleNavigation('/my-quizzes')}>
               My Quizzes
             </button>
             <button className="navButtons" onClick={() => {

@@ -87,4 +87,49 @@ const saveQuizToDatabase = async (topic, questionCount, quizData, userId) => {
 };
 
 
-module.exports = { generateQuiz };
+
+// Fetch all quizzes created by a specific user
+const fetchUserQuizzes = async (userId) => {
+  console.log("fetchUserQuizzes model "+userId);
+  
+  const connection = await pool.getConnection();
+  try {
+    const [quizzes] = await connection.execute(
+      'SELECT id, topic FROM quizzes WHERE user_id = ?',
+      [userId]
+    );
+    return quizzes;
+  } catch (error) {
+    console.error('Error fetching user quizzes:', error);
+    throw new Error('Failed to fetch user quizzes');
+  } finally {
+    connection.release();
+  }
+};
+
+// Fetch details of a specific quiz
+const fetchQuizDetails = async (quizId) => {
+  const connection = await pool.getConnection();
+  try {
+    const [questions] = await connection.execute(
+      `SELECT question, option1, option2, option3, option4, correct_answer
+       FROM questions WHERE quiz_id = ?`,
+      [quizId]
+    );
+
+    const formattedQuestions = questions.map((q) => ({
+      question: q.question,
+      options: [q.option1, q.option2, q.option3, q.option4],
+      correctAnswer: q.correct_answer,
+    }));
+
+    return formattedQuestions;
+  } catch (error) {
+    console.error('Error fetching quiz details:', error);
+    throw new Error('Failed to fetch quiz details');
+  } finally {
+    connection.release();
+  }
+};
+
+module.exports = { generateQuiz, fetchUserQuizzes, fetchQuizDetails };
