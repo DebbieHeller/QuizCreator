@@ -14,7 +14,7 @@ function Quiz() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(user.userId);
+    console.log(user.userID);
     if (quizContent?.quizData?.length > 0) {
       console.log("Quiz content updated:", quizContent.quizData);
     }

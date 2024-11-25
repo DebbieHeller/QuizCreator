@@ -1,7 +1,7 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const pool = require('../DBQUIZ.js'); // ייבוא החיבור למסד הנתונים
 
-const generateQuiz = async (questionCount, topic) => {
+const generateQuiz = async (questionCount, topic, userId) => {
   const genAI = new GoogleGenerativeAI(process.env.API_KEY);
   const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
@@ -37,29 +37,33 @@ const generateQuiz = async (questionCount, topic) => {
       };
     });
 
-    //console.log(formattedQuizData);
-
-    // שמירת חידון ושאלות במסד הנתונים
-    const quizId = await saveQuizToDatabase(topic, questionCount, formattedQuizData);
-
-    // החזרת כל הדאטה לאחר שמירה
-    return {
-
-      quizData: formattedQuizData,  // כאן מחזירים את השאלות עם הפורמט החדש
-    };
+    // אם userId לא שווה ל-0, שמור את החידון במסד הנתונים
+    if (userId !== 0) {
+      const quizId = await saveQuizToDatabase(topic, questionCount, formattedQuizData, userId);
+      return {
+        quizData: formattedQuizData,
+      };
+    } else {
+      // אם userId שווה ל-0, אל תשמור ב-DB ותחזיר את הנתונים שהתקבלו
+      console.log('Quiz not saved: userId is 0.');
+      return {
+        message: 'Quiz generation completed, but not saved due to invalid userId.',
+        quizData: formattedQuizData,
+      };
+    }
   } catch (error) {
     console.error('Error generating quiz:', error);
     throw new Error('Failed to generate quiz');
   }
 };
 
-const saveQuizToDatabase = async (topic, questionCount, quizData) => {
+const saveQuizToDatabase = async (topic, questionCount, quizData, userId) => {
   const connection = await pool.getConnection();
   try {
     // הוספת חידון לטבלת החידונים
     const [quizResult] = await connection.execute(
-      'INSERT INTO quizzes (topic, question_count) VALUES (?, ?)',
-      [topic, questionCount]
+      'INSERT INTO quizzes (topic, question_count, user_id) VALUES (?, ?, ?)',
+      [topic, questionCount, userId]
     );
     const quizId = quizResult.insertId;
 
@@ -69,15 +73,12 @@ const saveQuizToDatabase = async (topic, questionCount, quizData) => {
       await connection.execute(
         `INSERT INTO questions (quiz_id, question, option1, option2, option3, option4, correct_answer)
          VALUES (?, ?, ?, ?, ?, ?, ?)`,
-
         [quizId, questionText, options[0], options[1], options[2], options[3], correctAnswer]
       );
     }
 
     console.log('Quiz and questions saved to database');
-
-    // מחזירים את ה-quizId, ה-topic וה-quizData
-    return { quizId, topic, quizData };
+    return quizId;
   } catch (error) {
     console.error('Error saving quiz to database:', error);
     throw new Error('Failed to save quiz to database');

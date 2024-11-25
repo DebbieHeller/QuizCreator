@@ -11,10 +11,13 @@ function CreateQuiz({ onQuizCreated }) {
 
   const handleFetchQuiz = async () => {
     setLoading(true);
-  
+
     try {
-      console.log("the user"+user); // לוודא מה מגיע כאן
-  
+      // בדיקה אם user קיים ב-UserContext
+      const userId = user && user.userID ? user.userID : 0;
+
+      console.log("User ID being sent:", userId);
+
       const response = await fetch("http://localhost:5000/api/createQuiz", {
         method: "POST",
         headers: {
@@ -23,10 +26,10 @@ function CreateQuiz({ onQuizCreated }) {
         body: JSON.stringify({
           questionCount,
           topic,
-          userId: user.userID, // עדכן לאותיות הגדולות לפי המודפס
+          userId, // שולח 0 אם אין משתמש קיים
         }),
       });
-  
+
       if (response.ok) {
         const data = await response.json();
         onQuizCreated(data, topic);
@@ -40,7 +43,6 @@ function CreateQuiz({ onQuizCreated }) {
       setLoading(false);
     }
   };
-  
 
   return (
     <div className="create-quiz">
@@ -72,7 +74,7 @@ function CreateQuiz({ onQuizCreated }) {
             {loading ? "Creating Quiz..." : "Create Quiz"}
         </button>
     </div>
-);
+  );
 }
 
 export default CreateQuiz;
