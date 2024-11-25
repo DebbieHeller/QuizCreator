@@ -1,16 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { UserContext } from "../App"; // ודא שהנתיב נכון
 import '../CSS/Registation.css';
 
 function LogIn() {
   const navigate = useNavigate();
+  const { setUser } = useContext(UserContext); // גישה ל-setUser מה-UserContext
   const [formData, setFormData] = useState({});
+  const [error, setError] = useState(null);
 
   function handleChange(event) {
     const { name, value } = event.target;
     setFormData(prevFormData => ({
       ...prevFormData,
-      [name]: value
+      [name]: value,
     }));
   }
 
@@ -28,9 +31,9 @@ function LogIn() {
     const request = {
       method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     };
 
     fetch(`http://localhost:5000/users/logIn`, request)
@@ -42,18 +45,24 @@ function LogIn() {
       })
       .then(data => {
         const { user } = data;
-        alert("You entered successfully");
-        navigate('/');
+
+        if (user) {
+          setUser(user); // עדכון ה-UserContext
+          alert("You logged in successfully!");
+          navigate("/"); // מעבר לדף הבית
+        } else {
+          throw new Error("Login failed. User data is missing.");
+        }
       })
       .catch(error => {
+        setError(error.message);
         alert(error.message);
       });
   };
 
   return (
     <div>
-      <div className="onTopBtn">
-      </div>
+      <div className="onTopBtn"></div>
       <form id="form">
         <ul id="tabs" className="register-buttons active">
           <li className="tab">
@@ -67,16 +76,34 @@ function LogIn() {
           <h1>Welcome Back!</h1>
           <div className="User-fill">
             <input
-              className="input" id="userEmail" onChange={handleChange} type="text" placeholder="userEmail" name="email" required
+              className="input"
+              id="userEmail"
+              onChange={handleChange}
+              type="text"
+              placeholder="userEmail"
+              name="email"
+              required
             />
           </div>
           <div className="User-fill">
             <input
-              className="input" onChange={handleChange} id="userPassword" type="password" placeholder="Password" name="password" required
+              className="input"
+              onChange={handleChange}
+              id="userPassword"
+              type="password"
+              placeholder="Password"
+              name="password"
+              required
             />
           </div>
           <button
-            type="button" id="button-save" onClick={handleLogInButton}>LOG-IN</button>
+            type="button"
+            id="button-save"
+            onClick={handleLogInButton}
+          >
+            LOG-IN
+          </button>
+          {error && <p style={{ color: "red" }}>{error}</p>}
         </div>
       </form>
     </div>

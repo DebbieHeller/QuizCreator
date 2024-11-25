@@ -14,6 +14,7 @@ function Quiz() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log(user.userId);
     if (quizContent?.quizData?.length > 0) {
       console.log("Quiz content updated:", quizContent.quizData);
     }
@@ -58,14 +59,14 @@ function Quiz() {
     <div className="quiz-page">
       <div className="navigation-buttons">
         {!user && (
-          <button onClick={() => handleNavigation('/SignUp')}>SignUp</button>
+          <button className="navButtons" onClick={() => handleNavigation('/SignUp')}>SignUp</button>
         )}
         {user && (
           <>
-            <button onClick={() => handleNavigation('/myQuizzes')}>
+            <button className="navButtons" onClick={() => handleNavigation('/myQuizzes')}>
               My Quizzes
             </button>
-            <button onClick={() => {
+            <button className="navButtons" onClick={() => {
               setUser(null);
               handleNavigation('/');
             }}>

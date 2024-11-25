@@ -37,7 +37,7 @@ const generateQuiz = async (questionCount, topic) => {
       };
     });
 
-    console.log(formattedQuizData);
+    //console.log(formattedQuizData);
 
     // שמירת חידון ושאלות במסד הנתונים
     const quizId = await saveQuizToDatabase(topic, questionCount, formattedQuizData);
