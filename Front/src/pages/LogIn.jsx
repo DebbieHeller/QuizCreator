@@ -50,6 +50,7 @@ function LogIn() {
       
       // עדכון המשתמש בקונטקסט
       setUser(data.user);
+      console.log(user);
       
       // ניווט לדף הבית
       navigate("/");

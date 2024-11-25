@@ -13,12 +13,7 @@ function Quiz() {
   const [score, setScore] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    console.log(user.userID);
-    if (quizContent?.quizData?.length > 0) {
-      console.log("Quiz content updated:", quizContent.quizData);
-    }
-  }, [quizContent]);
+
 
   const handleQuizCreated = (quizData, topic) => {
     setQuizContent(quizData);

@@ -47,7 +47,6 @@ const generateQuiz = async (questionCount, topic, userId) => {
       // אם userId שווה ל-0, אל תשמור ב-DB ותחזיר את הנתונים שהתקבלו
       console.log('Quiz not saved: userId is 0.');
       return {
-        message: 'Quiz generation completed, but not saved due to invalid userId.',
         quizData: formattedQuizData,
       };
     }
@@ -86,5 +85,6 @@ const saveQuizToDatabase = async (topic, questionCount, quizData, userId) => {
     connection.release();
   }
 };
+
 
 module.exports = { generateQuiz };
