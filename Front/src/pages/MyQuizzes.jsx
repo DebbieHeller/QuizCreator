@@ -8,14 +8,19 @@ function MyQuizzes() {
     const [quizDetails, setQuizDetails] = useState(null); // מצב נוסף לשמירת פרטי החידון
     const [userAnswers, setUserAnswers] = useState({}); // לשמירת התשובות של המשתמש
     const [feedback, setFeedback] = useState({}); // לשמירת הפידבק על התשובות
+    const [show, setShow] = useState(false); // מצב להצגת השאלות
     const navigate = useNavigate();
-    const { user } = useContext(UserContext); // מקבל את המשתמש מהקונטקסט
+    const { user, setUser } = useContext(UserContext);
+
+    useEffect(() => {
+        console.log('quizDetails:', quizDetails);
+    }, [quizDetails]);
 
     useEffect(() => {
         console.log(user.userID);
-        
+
         const fetchQuizzes = async () => {
-            if (!user?.userID) return; // בדיקה שהמשתמש מחובר ויש לו userID
+            if (!user?.userID) return;
 
             try {
                 const response = await fetch(`http://localhost:5000/api/userQuizzes/${user.userID}`);
@@ -40,6 +45,7 @@ function MyQuizzes() {
             }
             const quizDetails = await response.json();
             setQuizDetails(quizDetails); // מעדכן את פרטי החידון בסטייט
+            setShow(true); // מציג את השאלות
         } catch (err) {
             console.error('Failed to fetch quiz details:', err);
         }
@@ -68,9 +74,16 @@ function MyQuizzes() {
 
     return (
         <div className="my-quizzes">
-            <button onClick={handleBackToHome} className="quiz-button back-button">
-                Back to Home
-            </button>
+            <div className='navigation-buttons'>
+                <button onClick={handleBackToHome} className="navButtons">Create Quiz</button>
+                <button className="navButtons" onClick={() => {
+                    setUser(null);
+                    navigate('/');
+                }}>
+                    Sign Out
+                </button>
+            </div>
+
             <h2>My Quizzes</h2>
             {quizzes.length > 0 ? (
                 quizzes.map((quiz) => (
@@ -86,21 +99,22 @@ function MyQuizzes() {
                 <p>No quizzes found.</p>
             )}
 
-            {/* אם יש פרטי חידון, מציג את השאלות */}
-            {quizDetails && (
-                <div className="quiz-details">
-                    <h3>Questions for "{quizDetails[0]?.topic}"</h3>
-                    {quizDetails.map((question, index) => (
-                        <SingleQuestion
-                            key={index}
-                            index={index}
-                            question={question}
-                            userAnswer={userAnswers[index]}
-                            onAnswerChange={handleAnswerChange}
-                            feedback={feedback[index]}
-                        />
-                    ))}
-                    <button onClick={handleSubmitQuiz} className="submit-button">Submit Quiz</button>
+            {/* אם יש פרטי חידון והמשתנה show אמת, מציג את השאלות */}
+            {show && quizDetails && (
+                <div className="quiz-container">
+                    <div className="quiz-details">
+                        {quizDetails.map((question, index) => (
+                            <SingleQuestion
+                                key={index}
+                                index={index}
+                                question={question}
+                                userAnswer={userAnswers[index]}
+                                onAnswerChange={handleAnswerChange}
+                                feedback={feedback[index]}
+                            />
+                        ))}
+                        <button onClick={handleSubmitQuiz} id="button-save">Submit Quiz</button>
+                    </div>
                 </div>
             )}
         </div>

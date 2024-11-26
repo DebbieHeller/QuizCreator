@@ -10,10 +10,10 @@ function SingleQuestion({
 }) {
   return (
     <div className={`single-question ${feedback?.includes("Correct")
-        ? "correct"
-        : feedback?.includes("Incorrect")
-          ? "incorrect"
-          : ""
+      ? "correct"
+      : feedback?.includes("Incorrect")
+        ? "incorrect"
+        : ""
       }`}>
       <p>
         <strong>Q{index + 1}:</strong> {question.question}
@@ -23,6 +23,7 @@ function SingleQuestion({
           <div key={idx}>
             <label>
               <input
+                className="questuonOption"
                 type="radio"
                 name={`question-${index}`}
                 value={option}

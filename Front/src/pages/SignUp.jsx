@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from '../App';
-import '../CSS/Registation.css';
+import '../CSS/registration.css';
 
 function SignUp() {
     const { setUser } = useContext(UserContext);

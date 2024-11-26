@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../App";
-import '../CSS/Registation.css';
+import '../CSS/registration.css';
 
 function LogIn() {
   const navigate = useNavigate();
@@ -47,11 +47,11 @@ function LogIn() {
 
       // שמירת הטוקן
       localStorage.setItem('token', data.token);
-      
+
       // עדכון המשתמש בקונטקסט
       setUser(data.user);
       console.log(user);
-      
+
       // ניווט לדף הבית
       navigate("/");
     } catch (error) {
@@ -72,14 +72,13 @@ function LogIn() {
             <Link to="/logIn" className="link-btn">Log In</Link>
           </li>
         </ul>
-        
+
         <div className="form-content">
           <h1>Welcome Back!</h1>
-          
+
           <div className="input-group">
             <input
               className={`input ${error && !formData.email ? 'error' : ''}`}
-              type="email"
               placeholder="Email"
               name="email"
               value={formData.email}
@@ -105,6 +104,7 @@ function LogIn() {
           {error && <p className="error-message">{error}</p>}
 
           <button
+            id="button-save"
             type="submit"
             className="submit-button"
             disabled={isLoading}

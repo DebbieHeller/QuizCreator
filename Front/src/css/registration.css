@@ -21,7 +21,7 @@
 body,
 html {
   min-width: 100%;
-  background-color: #ffefe9;
+  background-color: #EDE7E3; /* צבע רקע כללי */
   background-attachment: fixed;
   background-position: center;
   background-size: cover;
@@ -32,21 +32,21 @@ html {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  overflow: hidden;
-  /* מונע גלילה אם כל התוכן נכנס בעמוד */
+  overflow: hidden; /* מניעת גלילה אם כל התוכן נכנס בעמוד */
 }
-body{
+
+body {
   overflow-y: auto;
 }
 
 #form {
   margin-top: 300px;
-  background: rgba(252, 248, 246, 0.3);
+  background: rgba(130, 192, 204, 0.1); /* רקע שקוף תואם לפלטה */
   padding: 40px;
   min-width: 300px;
   max-width: 600px;
   border-radius: 4px;
-  box-shadow: 0 4px 10px 4px rgba(19, 35, 47, 0.6);
+  box-shadow: 0 4px 10px 4px rgba(22, 105, 122, 0.4); /* אפקט צל עדין */
 }
 
 .register-buttons {
@@ -70,8 +70,8 @@ body{
   display: block;
   text-decoration: none;
   padding: 15px;
-  background: #83C5BE;
-  color: #ffffff;
+  background: #489FB5; /* כפתורים ראשיים */
+  color: #EDE7E3; /* צבע טקסט */
   font-size: 20px;
   text-align: center;
   cursor: pointer;
@@ -79,19 +79,19 @@ body{
 }
 
 .register-buttons li a:hover {
-  background: #006D77;
-  color: #ffffff;
+  background: #16697A; /* שינוי גוון בהובר */
+  color: #FFA62B; /* טקסט מודגש */
 }
 
 .register-buttons a {
-  background: rgb(245, 167, 136);
-  color: #ffffff;
+  background: #FFA62B; /* מודגש */
+  color: #EDE7E3;
 }
 
 h1 {
   font-family: 'Quicksand';
   text-align: center;
-  color: #409299;
+  color: #16697A; /* כותרות */
   font-weight: 600;
   margin: 0 0 40px;
 }
@@ -99,16 +99,19 @@ h1 {
 #button-save {
   width: 100%;
   height: 67px;
-  background-color: #e278b2;
-  color: #EDF6F9;
+  background-color: #16697A; /* צבע כפתור שמור */
+  color: #EDE7E3;
   font-weight: 200;
   font-size: 250%;
   margin: 0;
+  border: none;
+  border-radius: 4px;
+  transition: all 0.3s ease;
 }
 
 #button-save:hover {
-  background-color: #EDF6F9;
-  color: #409299;
+  background-color: #FFA62B; /* הדגשה */
+  color: #16697A; /* טקסט מובחן */
 }
 
 .input,
@@ -120,17 +123,15 @@ textarea {
   padding: 5px 10px;
   margin-bottom: 8px;
   background: none;
-  background-image: none;
-  border: 1px solid #ffffff;
-  color: #343131;
-  border-radius: 0;
+  border: 1px solid #489FB5;
+  color: #333;
+  border-radius: 4px;
   transition: border-color 0.25s ease, box-shadow 0.25s ease;
   outline: 0;
-  border-color: #409299 !important;
 }
 
 textarea {
-  border: 2px solid #ffffff;
+  border: 2px solid #82C0CC;
   resize: vertical;
   width: 300px;
   height: 150px;
@@ -148,20 +149,22 @@ textarea {
 
 .button {
   font-family: 'Quicksand', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  border: 0;
+  border: none;
   outline: none;
-  border-radius: 0;
   padding: 15px 0;
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  background: #e278b2;
-  color: #ffffff;
+  background: #489FB5;
+  color: #EDE7E3;
   transition: all 0.5s ease;
+  border-radius: 4px;
 }
 
-
+.button:hover {
+  background: #16697A;
+}
 
 .button-block {
   display: block;
@@ -171,21 +174,22 @@ textarea {
 h2 {
   font-family: 'Quicksand', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   text-align: center;
-  color: #000000;
-  font-size: 300%;
+  color: #FFA62B;
+  font-size: 2.5rem;
   font-weight: 300;
   margin: 0;
 }
 
 #textArea {
-  background: rgba(19, 35, 47, 0.9);
+  background: rgba(130, 192, 204, 0.2);
   padding: 40px;
   max-width: 600px;
   margin: 40px auto;
   border-radius: 4px;
-  box-shadow: 0 4px 10px 4px rgba(19, 35, 47, 0.3);
+  box-shadow: 0 4px 10px 4px rgba(22, 105, 122, 0.3);
 }
 
+/* Responsiveness */
 @media only screen and (max-width: 600px) {
   #form {
     margin-top: 80px;
@@ -207,7 +211,6 @@ h2 {
   }
 }
 
-/* Small devices (portrait tablets and large phones, 600px and up) */
 @media only screen and (min-width: 600px) {
   #form {
     margin-top: 100px;
@@ -216,7 +219,6 @@ h2 {
   }
 }
 
-/* Medium devices (landscape tablets, 768px and up) */
 @media only screen and (min-width: 768px) {
   #form {
     margin-top: 60px;
@@ -225,7 +227,6 @@ h2 {
   }
 }
 
-/* Large devices (laptops/desktops, 992px and up) */
 @media only screen and (min-width: 992px) {
   #form {
     margin-top: 100px;
@@ -234,7 +235,6 @@ h2 {
   }
 }
 
-/* Extra large devices (large laptops and desktops, 1200px and up) */
 @media only screen and (min-width: 1200px) {
   #form {
     margin-top: 100px;

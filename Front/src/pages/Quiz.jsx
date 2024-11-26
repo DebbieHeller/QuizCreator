@@ -35,12 +35,12 @@ function Quiz() {
 
     let correctCount = 0;
     const newFeedback = {};
-    
+
     quizContent.quizData.forEach((question, index) => {
       const isCorrect = userAnswers[index] === question.correctAnswer;
       correctCount += isCorrect ? 1 : 0;
-      newFeedback[index] = isCorrect 
-        ? "Correct! 🎉" 
+      newFeedback[index] = isCorrect
+        ? "Correct! 🎉"
         : `Incorrect. The correct answer is: ${question.correctAnswer}`;
     });
 
@@ -72,31 +72,30 @@ function Quiz() {
       </div>
 
       <CreateQuiz onQuizCreated={handleQuizCreated} />
-      
-      {quizContent?.quizData?.length > 0 ? (
-        <div className="quiz-container">
-          <h2>Quiz on "{topic}"</h2>
-          {quizContent.quizData.map((question, index) => (
-            <SingleQuestion
-              key={index}
-              question={question}
-              index={index}
-              userAnswer={userAnswers[index]}
-              onAnswerChange={handleAnswerChange}
-              feedback={feedback[index]}
-            />
-          ))}
-          <button onClick={handleSubmitQuiz}>Submit Quiz</button>
-          {score !== null && (
-            <div className="score-container">
-              <h3>Your Score: {score}/100</h3>
-            </div>
-          )}
-        </div>
-      ) : (
-        <p>No quiz data available. Create a quiz to start!</p>
-      )}
-    </div>
+        {quizContent?.quizData?.length > 0 ? (
+          <div className="quiz-container">
+            <h2>Quiz on "{topic}"</h2>
+            {quizContent.quizData.map((question, index) => (
+              <SingleQuestion
+                key={index}
+                question={question}
+                index={index}
+                userAnswer={userAnswers[index]}
+                onAnswerChange={handleAnswerChange}
+                feedback={feedback[index]}
+              />
+            ))}
+            <button id="button-save" onClick={handleSubmitQuiz}>Submit Quiz</button>
+            {score !== null && (
+              <div className="score-container">
+                <h3>Your Score: {score}/100</h3>
+              </div>
+            )}
+          </div>
+        ) : (
+          <p>No quiz data available. Create a quiz to start!</p>
+        )}
+      </div>
   );
 }
 
