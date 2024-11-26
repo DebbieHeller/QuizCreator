@@ -15,6 +15,9 @@ body {
     overflow-x: hidden;
     display: flex;
     flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+
 }
 #root{
     max-height: none;
@@ -130,7 +133,7 @@ label{
     display: flex;
     justify-content: flex-start;
     background-color: #489FB5;
-    padding: 10px;
+    padding: 7px;
     gap: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
