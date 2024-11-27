@@ -2,15 +2,28 @@ const db = require('../DBQUIZ');
 
 class UserModel {
     // קבלת משתמש לפי אימייל
+    static async getIdByEmail(email) {
+        try {
+            const [rows] = await db.execute('SELECT * FROM users WHERE email = ?', [email]);
+            console.log(rows[0].userID);
+            return rows[0].userID || null;
+        } catch (error) {
+            console.error('Error in getUserByEmail:', error);
+            throw new Error('Database error while fetching user');
+        }
+    }
     static async getUserByEmail(email) {
         try {
             const [rows] = await db.execute('SELECT * FROM users WHERE email = ?', [email]);
+            console.log(rows[0]);
             return rows[0] || null;
         } catch (error) {
             console.error('Error in getUserByEmail:', error);
             throw new Error('Database error while fetching user');
         }
     }
+
+
 
     // קבלת משתמש לפי ID
     static async getUserById(userId) {

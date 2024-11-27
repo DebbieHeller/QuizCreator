@@ -81,7 +81,25 @@ const logInUser = async (req, res) => {
     }
 };
 
+const getUserId = async (email, res) => {
+    try {
+        // חיפוש המשתמש לפי המייל
+        const user = await UserModel.getIdByEmail(email); 
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+        return user;
+
+    } catch (error) {
+        console.error("Error in getUserId:", error);
+        res.status(500).json({ error: error.message || "An error occurred during the request." });
+    }
+};
+
+
+
 module.exports = {
     registerUser,
-    logInUser
+    logInUser,
+    getUserId
 };
