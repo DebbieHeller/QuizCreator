@@ -17,75 +17,72 @@ function Quiz() {
   const [sharedEmail, setSharedEmail] = useState(""); // שדה למייל של המשתמש
   const navigate = useNavigate();
 
-<<<<<<< Updated upstream
   useEffect(() => {
     if (!user) {
       navigate('/SignUp')
     }
   }, [user]);
-=======
   // Client-side (Quiz component)
-useEffect(() => {
-  if (!user) return;
+  useEffect(() => {
+    if (!user) return;
 
-  socket.emit('registerUser', user.email);
-  
-  // Listen for shared answers
-  socket.on('receiveAnswers', (data) => {
-    console.log('Received shared answers:', data);
-    // Optional: Update UI to show shared answers
-    setSharedAnswers(data.answers);
-  });
+    socket.emit('registerUser', user.email);
 
-  return () => {
-    socket.off('receiveAnswers');
+    // Listen for shared answers
+    socket.on('receiveAnswers', (data) => {
+      console.log('Received shared answers:', data);
+      // Optional: Update UI to show shared answers
+      setSharedAnswers(data.answers);
+    });
+
+    return () => {
+      socket.off('receiveAnswers');
+    };
+  }, [user]);
+
+  const handleSubmitQuiz1 = () => {
+    const answers = userAnswers;
+    socket.emit('shareAnswers', {
+      userEmail: user.email,
+      answers
+    });
+
+    // Existing submit logic...
   };
-}, [user]);
-
-const handleSubmitQuiz1 = () => {
-  const answers = userAnswers;
-  socket.emit('shareAnswers', { 
-    userEmail: user.email, 
-    answers 
-  });
-
-  // Existing submit logic...
-};
 
   // In client-side Quiz component
   useEffect(() => {
     // Only proceed if user is defined
     if (!user) return;
-  
+
     // Use existing socket connection
     socket.emit('registerUser', user.email);
-    
+
     const handleReceiveQuiz = (quizContent) => {
       console.log('Received quiz:', quizContent);
       setQuizContent(quizContent);
     };
-  
+
     socket.on('receiveQuiz', handleReceiveQuiz);
-  
+
     // Clean up listener
     return () => {
       socket.off('receiveQuiz', handleReceiveQuiz);
     };
   }, [user]); // Dependency on user ensures re-registration when user changes
-  
+
   const handleShareQuiz = () => {
     if (!sharedEmail || !quizContent) {
       alert("Please enter an email and create a quiz first.");
       return;
     }
-  
-    socket.emit("shareQuiz", { 
-      userEmail: sharedEmail, 
-      quizContent 
+
+    socket.emit("shareQuiz", {
+      userEmail: sharedEmail,
+      quizContent
     });
     alert(`Quiz shared with ${sharedEmail}`);
   };
->>>>>>> Stashed changes
 
   const handleQuizCreated = (quizData, topic) => {
     setQuizContent(quizData);
@@ -141,30 +138,30 @@ const handleSubmitQuiz1 = () => {
       alert("Please enter an email to share the quiz.");
       return; // אם לא הוזן מייל, לא נשלח את הבקשה
     }
-  
+
     try {
       // חיפוש משתמש לפי המייל שהוזן
       const response = await fetch(`http://localhost:5000/users?email=${sharedEmail}`);
       const data = await response.json();
-  
+
       // אם המשתמש לא נמצא, לא נשלח את החידון
       if (data.error) {
         alert("User not found");
         return;
       }
-  
+
       // אם המשתמש נמצא, נשלח את החידון
       const userId = data; // ה-ID של המשתמש
       socket.emit("shareQuiz", { userId, quizContent });
-  
+
       alert(`Quiz shared with user ID: ${userId}`);
     } catch (error) {
       console.error("Error sharing quiz:", error);
       alert("There was an error sharing the quiz.");
     }
   };
-  
-  
+
+
   const handleNavigation = (path) => navigate(path);
 
   const handleSignOut = () => {
@@ -172,7 +169,7 @@ const handleSubmitQuiz1 = () => {
     sessionStorage.removeItem("accessToken");
     handleNavigation('/');
   }
-  
+
   return (
     <div className="quiz-page">
       <div className="navigation-buttons">
@@ -192,17 +189,7 @@ const handleSubmitQuiz1 = () => {
             >
               My Quizzes
             </button>
-<<<<<<< Updated upstream
             <button className="navButtons" onClick={() => handleSignOut()}>
-=======
-            <button
-              className="navButtons"
-              onClick={() => {
-                setUser(null);
-                handleNavigation("/");
-              }}
-            >
->>>>>>> Stashed changes
               Sign Out
             </button>
           </>
@@ -211,12 +198,11 @@ const handleSubmitQuiz1 = () => {
 
       {/* יצירת חידון */}
       <CreateQuiz onQuizCreated={handleQuizCreated} />
-<<<<<<< Updated upstream
-=======
 
       {/* טופס לשיתוף החידון */}
       <div>
         <input
+          className="inputShareEmail"
           type="email"
           placeholder="Enter email to share with"
           value={sharedEmail}
@@ -229,7 +215,6 @@ const handleSubmitQuiz1 = () => {
       </div>
 
       {/* הצגת החידון אם קיים */}
->>>>>>> Stashed changes
       {quizContent?.quizData?.length > 0 ? (
         <div className="quiz-container">
           <h2>Quiz on "{topic}"</h2>
@@ -243,13 +228,7 @@ const handleSubmitQuiz1 = () => {
               feedback={feedback[index]}
             />
           ))}
-<<<<<<< Updated upstream
           <button id="button-save" onClick={handleSubmitQuiz}>Submit Quiz</button>
-=======
-          <button id="button-save" onClick={handleSubmitQuiz}>
-            Submit Quiz
-          </button>
->>>>>>> Stashed changes
           {score !== null && (
             <div className="score-container">
               <h3>Your Score: {score}/100</h3>

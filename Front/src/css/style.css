@@ -123,6 +123,20 @@ label{
     background-color: #FFFFFF;
     outline: none;
 }
+.inputShareEmail{
+    font-size: 15px;
+    width: 71%;
+    height: 40px;
+    padding: 5px 10px;
+    margin-top: 8px;
+    margin-right: 10px;
+    margin-left: 1px;
+    border: 1px solid #16697A !important;
+    color: #473f3f;
+    border-radius: 4px;
+    background-color: #EDE7E3;
+    outline: none;
+}
 
 /* Navigation */
 .navigation-buttons {

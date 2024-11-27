@@ -75,7 +75,7 @@ function MyQuizzes() {
     const handleSignOut = () => {
         setUser(null);
         sessionStorage.removeItem("accessToken");
-        handleNavigation('/');
+        navigate('/SignUp');
     }
     
     return (
