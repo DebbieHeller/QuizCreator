@@ -46,7 +46,7 @@ function LogIn() {
       }
 
       // שמירת הטוקן
-      localStorage.setItem('token', data.token);
+      sessionStorage.setItem('accessToken', data.token);
 
       // עדכון המשתמש בקונטקסט
       setUser(data.user);

@@ -16,26 +16,21 @@ function SignUp() {
     const handleRegisterButton = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-
-        // ולידציה
+    
         if (!userName || !email || !password || !verifyPassword) {
             setValidationError('Please fill in all fields.');
             setIsLoading(false);
             return;
         }
-
+    
         if (password !== verifyPassword) {
             setValidationError('Passwords do not match.');
             setIsLoading(false);
             return;
         }
-
-        const body = {
-            userName: userName,
-            email: email,
-            password: password,
-        };
-
+    
+        const body = { userName, email, password };
+    
         try {
             const response = await fetch('http://localhost:5000/users/signUp', {
                 method: "POST",
@@ -44,23 +39,17 @@ function SignUp() {
                 },
                 body: JSON.stringify(body)
             });
-
+    
             const data = await response.json();
-
+    
             if (!response.ok) {
                 throw new Error(data.error || 'Registration failed');
             }
-
-            // שמירת הטוקן
-            localStorage.setItem('token', data.token);
-
-            // עדכון המשתמש בקונטקסט
-            setUser(data.user);
-
-            // הודעת הצלחה
+    
+            sessionStorage.setItem('accessToken', data.token); // שמירת הטוקן
+            setUser(data.user); // עדכון המשתמש בקונטקסט
+    
             alert("You have successfully registered!");
-
-            // מעבר לדף הבית
             navigate('/');
         } catch (error) {
             setValidationError(error.message);
@@ -68,6 +57,7 @@ function SignUp() {
             setIsLoading(false);
         }
     };
+    
 
     return (
         <div>

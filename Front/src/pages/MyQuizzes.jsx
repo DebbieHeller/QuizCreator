@@ -72,14 +72,17 @@ function MyQuizzes() {
         setFeedback(newFeedback);
     };
 
+    const handleSignOut = () => {
+        setUser(null);
+        sessionStorage.removeItem("accessToken");
+        handleNavigation('/');
+    }
+    
     return (
         <div className="my-quizzes">
             <div className='navigation-buttons'>
                 <button onClick={handleBackToHome} className="navButtons">Create Quiz</button>
-                <button className="navButtons" onClick={() => {
-                    setUser(null);
-                    navigate('/');
-                }}>
+                <button className="navButtons" onClick={() => handleSignOut()}>
                     Sign Out
                 </button>
             </div>

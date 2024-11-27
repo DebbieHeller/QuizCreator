@@ -1,55 +1,55 @@
-import React, { useState, createContext, useEffect } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Quiz from './pages/Quiz';
+import React, { useState, createContext, useEffect } from "react"; 
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'; 
+import Quiz from './pages/Quiz'; 
 import SignUp from './pages/SignUp';
 import Login from './pages/LogIn';
-import MyQuizzes from './pages/MyQuizzes'; // ייבוא הרכיב החדש
+import MyQuizzes from './pages/MyQuizzes'; 
 
 export const UserContext = createContext();
 
-// רכיב מגן על נתיבים
+// רכיב להגנה על נתיבים שלא ניתן לגשת אליהם ללא התחברות
 const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('token'); // בדיקת טוקן בחלון המקומי (localStorage)
   if (!token) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" replace />; // אם אין טוקן, מעבירים לדף התחברות
   }
-  return children;
+  return children; // אם יש טוקן, מאפשרים גישה לנתיב המוגן
 };
 
 function App() {
-  const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState(null); 
+  const [isLoading, setIsLoading] = useState(true); 
 
   const handleSignOut = () => {
-    localStorage.removeItem('token'); // מחיקת הטוקן
-    setUser(null); // איפוס המשתמש בקונטקסט
+    sessionStorage.removeItem('accessToken'); 
+
+    setUser(null); 
   };
 
   useEffect(() => {
-    // בדיקת טוקן קיים והשגת פרטי משתמש
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('accessToken'); 
     if (token) {
-      fetch('http://localhost:5000/users/verify', {
+      fetch('http://localhost:5000/users/verify', { // בקשת אימות מהשרת
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}` // שליחת הטוקן באישור
         }
       })
-        .then(res => res.json())
+        .then(res => res.json()) 
         .then(data => {
           if (data.user) {
-            setUser(data.user);
+            setUser(data.user); // אם האימות הצליח, שמירת פרטי המשתמש
           } else {
-            localStorage.removeItem('token');
+            sessionStorage.removeItem('accessToken'); 
           }
         })
         .catch(() => {
-          localStorage.removeItem('token');
+          sessionStorage.removeItem('accessToken'); 
         })
         .finally(() => {
-          setIsLoading(false);
+          setIsLoading(false); 
         });
     } else {
-      setIsLoading(false);
+      setIsLoading(false); // אם אין טוקן, מסיימים טעינה
     }
   }, []);
 
@@ -74,7 +74,7 @@ function App() {
           } />
           <Route path="/my-quizzes" element={
             <ProtectedRoute>
-              <MyQuizzes userID={user?.id} />
+              <MyQuizzes userID={user?.id} /> 
             </ProtectedRoute>
           } />
         </Routes>

@@ -13,7 +13,11 @@ function Quiz() {
   const [score, setScore] = useState(null);
   const navigate = useNavigate();
 
-
+  useEffect(() => {
+    if (!user) {
+      navigate('/SignUp')
+    }
+  }, [user]);
 
   const handleQuizCreated = (quizData, topic) => {
     setQuizContent(quizData);
@@ -50,6 +54,12 @@ function Quiz() {
 
   const handleNavigation = (path) => navigate(path);
 
+  const handleSignOut = () => {
+    setUser(null);
+    sessionStorage.removeItem("accessToken");
+    handleNavigation('/');
+  }
+  
   return (
     <div className="quiz-page">
       <div className="navigation-buttons">
@@ -61,10 +71,7 @@ function Quiz() {
             <button className="navButtons" onClick={() => handleNavigation('/my-quizzes')}>
               My Quizzes
             </button>
-            <button className="navButtons" onClick={() => {
-              setUser(null);
-              handleNavigation('/');
-            }}>
+            <button className="navButtons" onClick={() => handleSignOut()}>
               Sign Out
             </button>
           </>
@@ -72,30 +79,30 @@ function Quiz() {
       </div>
 
       <CreateQuiz onQuizCreated={handleQuizCreated} />
-        {quizContent?.quizData?.length > 0 ? (
-          <div className="quiz-container">
-            <h2>Quiz on "{topic}"</h2>
-            {quizContent.quizData.map((question, index) => (
-              <SingleQuestion
-                key={index}
-                question={question}
-                index={index}
-                userAnswer={userAnswers[index]}
-                onAnswerChange={handleAnswerChange}
-                feedback={feedback[index]}
-              />
-            ))}
-            <button id="button-save" onClick={handleSubmitQuiz}>Submit Quiz</button>
-            {score !== null && (
-              <div className="score-container">
-                <h3>Your Score: {score}/100</h3>
-              </div>
-            )}
-          </div>
-        ) : (
-          <p>No quiz data available. Create a quiz to start!</p>
-        )}
-      </div>
+      {quizContent?.quizData?.length > 0 ? (
+        <div className="quiz-container">
+          <h2>Quiz on "{topic}"</h2>
+          {quizContent.quizData.map((question, index) => (
+            <SingleQuestion
+              key={index}
+              question={question}
+              index={index}
+              userAnswer={userAnswers[index]}
+              onAnswerChange={handleAnswerChange}
+              feedback={feedback[index]}
+            />
+          ))}
+          <button id="button-save" onClick={handleSubmitQuiz}>Submit Quiz</button>
+          {score !== null && (
+            <div className="score-container">
+              <h3>Your Score: {score}/100</h3>
+            </div>
+          )}
+        </div>
+      ) : (
+        <p>No quiz data available. Create a quiz to start!</p>
+      )}
+    </div>
   );
 }
 
