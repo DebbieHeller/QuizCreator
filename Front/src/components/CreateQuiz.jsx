@@ -3,7 +3,7 @@ import "../css/style.css";
 import { UserContext } from '../App';
 import io from "socket.io-client";
 
-const socket = io("http://localhost:5000"); // חיבור לשרת Socket.IO
+const socket = io("http://localhost:5000");
 
 function CreateQuiz({ onQuizCreated }) {
   const [questionCount, setQuestionCount] = useState(5);

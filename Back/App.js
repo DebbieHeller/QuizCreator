@@ -1,44 +1,52 @@
-const express = require("express");
-require("dotenv").config();
-const cors = require("cors");
-const http = require("http"); // ספרייה לניהול HTTP
-const { Server } = require("socket.io"); // Socket.IO
+const express = require("express"); 
+require("dotenv").config(); 
+const cors = require("cors"); 
+const http = require("http"); 
+const { Server } = require("socket.io"); 
 
-const quizRouter = require("./routes/QuizRouter"); // הפנייה ל-Router
-const UsersRouter = require("./routes/UsersRouter");
+const quizRouter = require("./routes/QuizRouter"); 
+const UsersRouter = require("./routes/UsersRouter"); 
 
-const app = express();
+const app = express(); 
 
-// middleware כדי לטפל ב-URL query parameters
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json()); // אם אתה שולח גם JSON בבקשה
-const PORT = 5000;
+app.use(express.urlencoded({ extended: true })); 
+app.use(express.json()); 
+const PORT = 5000; 
 
-// יצירת שרת HTTP
 const server = http.createServer(app);
+app.use(cors());
+app.use(express.json());
 
-// הגדרת Socket.IO
+app.get("/api/test", (req, res) => {
+  res.send({ message: "API is working!" });
+});
+
+app.use("/api", quizRouter); 
+app.use("/users", UsersRouter);
+
+// הגדרת Socket.IO לשרת HTTP
 const io = new Server(server, {
   cors: {
-    origin: "*", // אפשר להתאים את זה לדומיינים מאושרים
-    methods: ["GET", "POST"],
+    origin: "*", 
+    methods: ["GET", "POST"], 
   },
 });
 
-// מאחסן את ה-Socket IDs של כל המשתמשים
-// In server-side Socket.IO setup
+// אובייקט שמכיל את Socket IDs של המשתמשים
 let userSockets = {};
 
 io.on("connection", (socket) => {
+  // רישום משתמש עם מזהה ייחודי (userIdentifier)
   socket.on("registerUser", (userIdentifier) => {
-    userSockets[userIdentifier] = socket.id;
+    userSockets[userIdentifier] = socket.id; // שמירת Socket ID של המשתמש
     console.log(`User registered: ${userIdentifier}`);
   });
 
   socket.on("shareQuiz", ({ userEmail, quizContent }) => {
-    const targetSocketId = userSockets[userEmail];
+    const targetSocketId = userSockets[userEmail]; // בדיקת האם יש ID עבור המייל
 
     if (targetSocketId) {
+      // שליחה של החידון למשתמש המתאים
       io.to(targetSocketId).emit("receiveQuiz", quizContent);
       console.log(`Quiz shared with ${userEmail}`);
     } else {
@@ -47,69 +55,52 @@ io.on("connection", (socket) => {
   });
 });
 
-// Server-side Socket.IO
+// // אירוע נוסף לשיתוף תשובות חידון לכל המשתמשים
+// io.on("connection", (socket) => {
+//   socket.on("shareAnswers", (data) => {
+//     const { userEmail, answers } = data;
+
+//     // שליחה של התשובות לכל הלקוחות המחוברים
+//     io.emit("receiveAnswers", {
+//       userEmail,
+//       answers,
+//     });
+//   });
+// });
+
+
 io.on("connection", (socket) => {
-  socket.on("shareAnswers", (data) => {
-    const { userEmail, answers } = data;
-
-    // Broadcast answers to all connected clients
-    io.emit("receiveAnswers", {
-      userEmail,
-      answers,
-    });
-  });
-});
-
-app.use(cors());
-app.use(express.json());
-
-// Route for testing API
-app.get("/api/test", (req, res) => {
-  res.send({ message: "API is working!" });
-});
-
-// הוספת Routes קיימים
-app.use("/api", quizRouter);
-app.use("/users", UsersRouter);
-
-// Socket.IO Events
-io.on("connection", (socket) => {
-  // שמירה על ה-Socket ID של כל משתמש
+  // רישום Socket ID עבור משתמש
   socket.on("registerUser", (userId) => {
-    // אם המשתמש מתחבר, נשמור את ה-Socket ID שלו
-    userSockets[userId] = socket.id;
+    userSockets[userId] = socket.id; // שמירת Socket ID
     console.log(`User registered with ID: ${userId}`);
   });
 
-  // אירוע שליחת חידון עם מייל
+
   socket.on("shareQuiz", ({ userId, quizContent }) => {
     console.log(`Attempting to share quiz with user ID: ${userId}`);
 
     if (userId) {
-      // שולחים את החידון למשתמש עם ה-ID הספציפי
-      io.to(userId).emit("receiveQuiz", quizContent);
+      io.to(userId).emit("receiveQuiz", quizContent); // שליחה למשתמש
       console.log(`Shared quiz with user ID: ${userId}`);
     } else {
       console.error(`User ID ${userId} not found or not registered`);
     }
   });
 
-  // אירוע שליחת תשובות והניקוד
+
   socket.on("submitQuiz", (data) => {
     const { score, answers } = data;
     console.log(`Received score: ${score}`);
     console.log(`Answers: ${answers}`);
 
-    // שלח את הניקוד לכל הלקוחות
-    io.emit("receiveScore", { score, answers });
+    io.emit("receiveScore", { score, answers }); // שידור לכולם
   });
 
-  // אירוע התנתקות
   socket.on("disconnect", () => {
-    // כאשר משתמש מתנתק, נסיר את ה-Socket ID מהמפה
     for (let userId in userSockets) {
       if (userSockets[userId] === socket.id) {
-        delete userSockets[userId];
+        delete userSockets[userId]; // מחיקת המשתמש שהתחבר
       }
     }
   });

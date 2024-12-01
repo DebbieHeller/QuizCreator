@@ -40,22 +40,17 @@ function Quiz() {
     };
   }, [user]);
 
-  const handleSubmitQuiz1 = () => {
-    const answers = userAnswers;
-    socket.emit('shareAnswers', {
-      userEmail: user.email,
-      answers
-    });
-
-    // Existing submit logic...
-  };
+  // const handleSubmitQuiz1 = () => {
+  //   const answers = userAnswers;
+  //   socket.emit('shareAnswers', {
+  //     userEmail: user.email,
+  //     answers
+  //   });
+  // };
 
   // In client-side Quiz component
   useEffect(() => {
-    // Only proceed if user is defined
     if (!user) return;
-
-    // Use existing socket connection
     socket.emit('registerUser', user.email);
 
     const handleReceiveQuiz = (quizContent) => {
@@ -69,7 +64,7 @@ function Quiz() {
     return () => {
       socket.off('receiveQuiz', handleReceiveQuiz);
     };
-  }, [user]); // Dependency on user ensures re-registration when user changes
+  }, [user]); 
 
   const handleShareQuiz = () => {
     if (!sharedEmail || !quizContent) {

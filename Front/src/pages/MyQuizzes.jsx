@@ -18,6 +18,9 @@ function MyQuizzes() {
 
     useEffect(() => {
         console.log(user.userID);
+        if (!user) {
+            navigate("/login");
+        }
 
         const fetchQuizzes = async () => {
             if (!user?.userID) return;
@@ -62,7 +65,7 @@ function MyQuizzes() {
         navigate('/');
     };
 
-    // פונקציה לחישוב הפידבק
+    // פונקציה לחישוב הציון
     const handleSubmitQuiz = () => {
         const newFeedback = quizDetails.map((question, index) => {
             const userAnswer = userAnswers[index];
@@ -102,7 +105,6 @@ function MyQuizzes() {
                 <p>No quizzes found.</p>
             )}
 
-            {/* אם יש פרטי חידון והמשתנה show אמת, מציג את השאלות */}
             {show && quizDetails && (
                 <div className="quiz-container">
                     <div className="quiz-details">

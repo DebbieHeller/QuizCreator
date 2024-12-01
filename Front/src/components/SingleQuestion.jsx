@@ -1,13 +1,7 @@
 import React, { useState } from "react";
 import "../css/style.css";
 
-function SingleQuestion({
-  question,
-  index,
-  userAnswer,
-  onAnswerChange,
-  feedback
-}) {
+function SingleQuestion({ question,index, userAnswer,onAnswerChange,feedback}) {
   return (
     <div className={`single-question ${feedback?.includes("Correct")
       ? "correct"
